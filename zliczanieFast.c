@@ -2,47 +2,47 @@
 #include <time.h>
 
 unsigned char tab[65536]; //globalna tablica do przechowywania iloœci jedynek
-						  //w s³owach bêd¹cych indeksami tablicy
+						  //w slowach bedacych indeksami tablicy
 
 //	funkcje pomocnicze:
-unsigned long long losuj();				// s³owo o losowej liczbie jedynek (rozk³ad normalny)
-unsigned long long losujIle(int ile1);	// s³owo o zadanej liczbie jedynek
-void wartosci16(unsigned char *tab);	// wype³nianie tablicy globalnej;
+unsigned long long losuj();				// slowo o losowej liczbie jedynek (rozklad normalny)
+unsigned long long losujIle(int ile1);	// slowo o zadanej liczbie jedynek
+void wartosci16(unsigned char *tab);	// wypelnianie tablicy globalnej;
 
 /*
 	Pod komentarzem funkcja zliczaj¹ca jedynki.
-	Wywo³ywana zawsze z argumentem b = 32. 
+	Wywolywana zawsze z argumentem b = 32. 
 
-	Poni¿sza tabela pokazuje z jak¹ liczb¹ porównywaæ
-	argument b (lewa kolumna), ¿eby algorytm dzieli³ s³owo 
-	wejœciowe na s³owa o po¿¹danej iloœci bitów (prawa kolumna):
+	Ponizsza tabela pokazuje z jaka liczb¹ porownywac
+	argument b (lewa kolumna), zeby algorytm dzielil slowo 
+	wejsciowe na slowa o pozadanej ilosci bitow (prawa kolumna):
 
 	b:	  bity:
-	32	- 64 (nie uwzglêdniono w tej implementacji)
-	16	- 32 (nie uwzglêdniono w tej implementacji)
+	32	- 64 (nie uwzgledniono w tej implementacji)
+	16	- 32 (nie uwzgledniono w tej implementacji)
 	8	- 16
 	4	- 8
 	2	- 4
 	1	- 2
 	0	- 1
 
-	Na koñcu pliku poda³em przyk³ad implementacji która na sztywno
-	dzieli s³owo wejœciowe na 4 s³owa 16 - bitowe (funkcja licz16).
-	Dzia³a nieco szybciej.
+	Na koncu pliku podalem przyklad implementacji ktora na sztywno
+	dzieli s³owo wejsciowe na 4 s³owa 16 - bitowe (funkcja licz16).
+	Dziala nieco szybciej.
 */
 int licz(unsigned long long liczba, int b)
 {
 	if(!liczba)
 		return 0;
-	else if(b == 8) //mo¿liwa zmiana parametru na wybrany z powy¿szej tabeli
+	else if(b == 8) //mozliwa zmiana parametru na wybrany z powyzszej tabeli
 		return tab[liczba];
 	else
-		//podzia³ s³owa wejœciowego na wzór drzewa binarnego:
+		//podzial slowa wejsciowego na wzor drzewa binarnego:
 		return licz(liczba >> b, b >> 1) + licz(liczba & 0xffffffff >> 32 - b, b >> 1);
 		
 }
 
-//	Funkcja zliczaj¹ca jedynki dla s³owa 256 bitowego
+//	Funkcja zliczajaca jedynki dla slowa 256 bitowego
 int licz256(unsigned long long *liczba)
 {
 	return licz(*liczba++, 32) + licz(*liczba++, 32) + licz(*liczba++, 32) + licz(*liczba, 32);
@@ -58,30 +58,30 @@ main()
 	srand(time(NULL));
 	wartosci16(tab);
 	
-	//	test poprawnoœci:
+	//	test poprawnosci:
 	for(k = 0; k < 65; k++){
 		num = losujIle(k);
 		if(licz(num, 32) != k){
-			printf("b³¹d dla liczby %d\n", k);
+			printf("blad dla liczby %d\n", k);
 			return;
 		}		
 	}
 	printf("test poprawnosci: ok\n");
 	
 	/*	
-		w poni¿szych testach zmienna k jest iterowana ró¿n¹ iloœæ razy,
-		bo wyniki s³u¿¹ do porównania ró¿nych algorytmów a nie wyników
-		jednego algorytmu dla ró¿nych testów
+		w ponizszych testach zmienna k jest iterowana rozn¹ ilosc razy,
+		bo wyniki sluza do porownania roznych algorytmow a nie wynikow
+		jednego algorytmu dla roznych testow
 	*/
 	
-	//	test szybkoœci dla losowego slowa:
+	//	test szybkosci dla losowego slowa:
 	t = clock();
 	for(k = 0; k < 0x1ffffff; k++)
 		licz(losuj(), 32);
 	t = clock() - t;
 	printf("test szybkosci 1 -> liczba cykli: %u\n", t);
 	
-	//	test szybkoœci dla slowa bitowego o losowej (rozklad jednostajny) liczbie jedynek:
+	//	test szybkosci dla slowa bitowego o losowej (rozklad jednostajny) liczbie jedynek:
 	t = clock();
 	for(k = 0; k < 0xffffff; k++){
 		num = losujIle(rand() % 65);
@@ -97,7 +97,7 @@ main()
 	t = clock() - t;
 	printf("test szybkosci 3 -> liczba cykli: %u\n", t);
 	
-	//	test poprawnoœci dla s³owa 256 bitowego:
+	//	test poprawnosci dla slowa 256 bitowego:
 	for(i = 0; i < 4; i++)
 		for(k = 0; k < 65; k++){
 			num256[i] = losujIle(k);
@@ -158,7 +158,7 @@ void wartosci16(unsigned char *tab)
 		}
 }
 
-int licz16(unsigned short *liczba) //za³o¿enie ¿e short to 2 bajty
+int licz16(unsigned short *liczba) //zalo¿enie ze short to 2 bajty
 {
 	return tab[*liczba++] + tab[*liczba++] + tab[*liczba++] + tab[*liczba];
 }
